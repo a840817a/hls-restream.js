@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hls Restream Manager</title>
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+    <span class="navbar-brand mx-4 mb-0 h1">Hls Restream</span>
+</nav>
+
+<div class="container mt-5">
+    <h1 class="mb-3">Streaming List</h1>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
+        <button class="btn btn-primary" id="update-button">Update</button>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addHlsModal">Add Hls</button>
+    </div>
+    <div class="row" id="card-list">
+        <!-- cards -->
+    </div>
+</div>
+
+<!-- Add Hls Dialog -->
+<div class="modal fade" id="addHlsModal" tabindex="-1" aria-labelledby="addHlsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addHlsModalLabel">Add Hls</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addHlsForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="url" class="form-label">Url</label>
+                        <input type="url" class="form-control" id="url" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+    const apiBase = '/api';
+
+    document.getElementById('update-button').addEventListener('click', loadCards);
+    document.getElementById('addHlsForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const name = document.getElementById('name').value;
+        const url = document.getElementById('url').value;
+
+        fetch(apiBase + '/stream', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name, url})
+        })
+            .then(response => response.json())
+            .then(() => {
+                const modalElement = document.getElementById('addHlsModal');
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+                loadCards();
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    function createCard(item) {
+        const col = document.createElement('div');
+        col.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">${item.title}</h5>
+                        <p class="card-text">Source Url: ${item.sourceUrl}</p>
+                        <a href="${item.playerLink}" class="btn btn-primary">Open Player</a>
+                    </div>
+                </div>
+            `;
+        return col;
+    }
+
+    function loadCards() {
+        const cardList = document.getElementById('card-list');
+        cardList.innerHTML = '';
+
+        fetch(apiBase + '/stream')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(item => {
+                    const cardElement = createCard(item);
+                    cardList.appendChild(cardElement);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    loadCards();
+</script>
+</body>
+</html>
