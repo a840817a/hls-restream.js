@@ -11,6 +11,7 @@ import "./website/website";
 import "./website/manage";
 import "./website/player";
 import "./website/stream";
+import "./website/media";
 
 let server = new InversifyExpressServer(container);
 server.setConfig((app) => {

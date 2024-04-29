@@ -57,7 +57,14 @@ export class PlaylistDownloader implements IPlaylistDownloader {
     }
 
     async getSource() {
-        let data = await this.downloadManager.get(this.originalUri, 30);
+        let data: any;
+        try {
+            data = await this.downloadManager.get(this.originalUri, 30);
+        }
+        catch (e) {
+            throw e;
+        }
+
         let hls = this.hlsPlaylistFactory.create();
         hls.parse(data, UrlUtilities.getUrlBase(this.originalUri));
         return hls;
@@ -83,12 +90,12 @@ export class PlaylistDownloader implements IPlaylistDownloader {
                 if (!this.source.completed) setTimeout(this.updateData.bind(this), this.source?.targetDuration * 1000);
             }
         } catch (e) {
-            this.logger.logError('Unknown error update playlist', e);
+            this.logger.logError('Unknown error update playlist\n', JSON.stringify(e));
             setTimeout(this.updateData.bind(this), (this.source?.targetDuration / 2) * 1000);
         }
     }
 
-    generateIndex(windowSize?: number) {
+    generateIndex(pathPrefix?: string, windowSize?: number) {
         if (this.source == undefined) return '';
 
         let startIndex = 0;
@@ -102,7 +109,15 @@ export class PlaylistDownloader implements IPlaylistDownloader {
 
         for (let i = startIndex; i < this.data.length; i++) {
             if (this.data[i].downloading) return result;
-            result += `#EXTINF:${this.data[i].info.duration.toFixed(5)},\n${this.data[i].filename}\n`
+            result += `#EXTINF:${this.data[i].info.duration.toFixed(5)},\n`;
+
+            if (pathPrefix != undefined) {
+                if (pathPrefix.slice(-1) !== '/') pathPrefix += '/';
+                result += `${pathPrefix}${this.data[i].filename}\n`
+            }
+            else {
+                result += `${this.data[i].filename}\n`
+            }
         }
 
         if (this.source.completed) result += '#EXT-X-ENDLIST\n';

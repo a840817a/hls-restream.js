@@ -1,5 +1,5 @@
 import {IConfig} from "../../definition/interface/config";
-import {IFileAccess} from "../../definition/interface/io";
+import {IFileAccess, ILogger} from "../../definition/interface/io";
 import {IDownloadManager} from "../../definition/interface/manager";
 import {
     IMultiVariantListDownloader,
@@ -26,7 +26,8 @@ export class MultiVariantListDownloader implements IMultiVariantListDownloader {
 
     public constructor(
         private config: IConfig,
-        private httpDownloader: IDownloadManager,
+        private logger: ILogger,
+        private downloadManager: IDownloadManager,
         private fileManager: IFileAccess,
         private variantListDownloaderItemFactory: IVariantListDownloaderItemFactory,
         private hlsMultiVariantListFactory: IHlsMultiVariantListFactory,
@@ -35,12 +36,17 @@ export class MultiVariantListDownloader implements IMultiVariantListDownloader {
         this.originalUri = originalUri;
         this.targetPath = targetPath;
 
+        this.logger.setClassName((this as any).constructor.name);
+
         if (source != undefined) {
             let data = this.hlsMultiVariantListFactory.create();
             data.parse(source, UrlUtilities.getUrlBase(this.originalUri));
             this.init(data);
         } else {
-            this.getSource().then(data => this.init(data));
+            this.getSource().then(data => this.init(data))
+                .catch((error) => {
+                    this.logger.logError(`Cannot get source: ${this.originalUri}\n`, JSON.stringify(error));
+                });
         }
     }
 
@@ -58,30 +64,32 @@ export class MultiVariantListDownloader implements IMultiVariantListDownloader {
     }
 
     async getSource() {
-        let data = await this.httpDownloader.get(this.originalUri, 30);
+        let data: any;
+        try {
+            data = await this.downloadManager.get(this.originalUri, 30);
+        }
+        catch (e) {
+            throw e;
+        }
+
         let hls = this.hlsMultiVariantListFactory.create();
         hls.parse(data, UrlUtilities.getUrlBase(this.originalUri));
         return hls;
     }
 
-    generateIndex(windowSize?: number) {
+    generateIndex() {
         if (this.source == undefined) return '';
-
-        let startIndex = 0;
-        if (windowSize != undefined && this.data.length > windowSize) {
-            startIndex = this.data.length - windowSize;
-        }
 
         let result = '#EXTM3U\n#EXT-X-VERSION:3\n'
         if (this.source.independentSegments) result += '#EXT-X-INDEPENDENT-SEGMENTS\n';
 
-        for (let i = startIndex; i < this.data.length; i++) {
+        for (let i = 0; i < this.data.length; i++) {
             result += `#EXT-X-STREAM-INF:BANDWIDTH=${this.data[i].info.bandwidth},` +
                 `AVERAGE-BANDWIDTH=${this.data[i].info.averageBandwidth},` +
                 `CODECS="${this.data[i].info.codecs}",` +
                 `RESOLUTION=${this.data[i].info.resolution},` +
                 `FRAME-RATE=${this.data[i].info.frameRate.toFixed(3)}\n` +
-                `${this.data[i].name}/index.m3u8\n`
+                `${this.data[i].name}/index.m3u8\n`;
         }
 
         return result;

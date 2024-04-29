@@ -6,15 +6,14 @@ export interface IHlsDownloader {
     source?: IHlsFile;
     targetPath: string;
     originalUri: string;
-    generateIndex: (windowSize?: number) => string;
+    fullPath: string;
+
+    generateIndex: (mediaPathPrefix?: string, windowSize?: number) => string;
 }
 
 export interface IMultiVariantListDownloader extends IHlsDownloader {
     source?: IHlsMultiVariantList;
     data: IVariantListDownloaderItem[];
-    fullPath: string;
-
-    generateIndex(windowSize?: number): string;
 
     saveFile(): Promise<void>;
 }
@@ -22,9 +21,6 @@ export interface IMultiVariantListDownloader extends IHlsDownloader {
 export interface IPlaylistDownloader extends IHlsDownloader {
     source?: IHlsPlaylist;
     data: IMediaDownloader[];
-    fullPath: string;
-
-    generateIndex(windowSize?: number): string;
 
     saveFile(): Promise<void>;
 }

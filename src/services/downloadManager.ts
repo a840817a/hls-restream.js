@@ -69,7 +69,6 @@ export class DownloadManager implements IDownloadManager {
         try {
             resolve(await this.httpAccess.download(url));
         } catch (error) {
-            this.logger.logError('Error downloading file:', error);
             reject(error);
         }
     }
@@ -78,7 +77,6 @@ export class DownloadManager implements IDownloadManager {
         try {
             resolve(this.httpAccess.downloadBinary(url));
         } catch (error) {
-            this.logger.logError('Error downloading file:', error);
             reject(error);
         }
     }

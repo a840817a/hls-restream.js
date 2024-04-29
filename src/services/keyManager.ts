@@ -15,11 +15,21 @@ export class KeyManager implements IKeyManager {
 
     async getKey(uri: string) {
         if (uri in this.keys) return this.keys[uri];
-        let download = await this.downloadManager.getBinary(uri, 50);
-        if (download == undefined) {
-            this.logger.logError('Cannot get key !:');
+        let download: Buffer | undefined;
+
+        try {
+            download = await this.downloadManager.getBinary(uri, 50);
+        }
+        catch (error) {
+            this.logger.logError('Cannot get key, Error:', JSON.stringify(error));
             return undefined;
         }
+
+        if (download == undefined) {
+            this.logger.logError('Cannot get key,  response empty');
+            return undefined;
+        }
+
         this.keys[uri] = download;
         return download;
     }

@@ -39,9 +39,11 @@ export class DownloadJob implements IDownloadJob {
             if (result.includes('#EXT-X-STREAM-INF')) {
                 this.downloader =  this.multiVariantListDownloaderFactory.create(this.sourceUrl, this.id, result);
             }
-            this.downloader =  this.playlistDownloaderFactory.create(this.sourceUrl, this.id, result);
+            else {
+                this.downloader = this.playlistDownloaderFactory.create(this.sourceUrl, this.id, result);
+            }
         } catch (error) {
-            this.logger.logError('Error downloading file:', error);
+            this.logger.logError(`Error downloading file: ${this.sourceUrl}\n`, JSON.stringify(error));
             this.downloader =  undefined;
         }
     }

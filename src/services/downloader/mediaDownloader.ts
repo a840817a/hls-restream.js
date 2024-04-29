@@ -58,8 +58,18 @@ export class MediaDownloader implements IMediaDownloader {
     }
 
     async getSource() {
-        let data = await this.downloadManager.getBinary(this.info.uri);
+        let data: Buffer | undefined;
+        try {
+            data = await this.downloadManager.getBinary(this.info.uri, 20 + this.errorCount);
+        }
+        catch (error) {
+            this.logger.logError('Cannot get media, Error:\n', JSON.stringify(error));
+            this.downloadErrorRetry();
+            return;
+        }
+
         if (data == undefined) {
+            this.logger.logError('Cannot get media, response empty');
             this.downloadErrorRetry();
             return;
         }
@@ -73,7 +83,7 @@ export class MediaDownloader implements IMediaDownloader {
                         return;
                     }
 
-                    data = EncryptionUtilities.DecryptData(data, key, this.info.key.iv);
+                    data = EncryptionUtilities.DecryptAes128Data(data, key, this.info.key.iv);
                     if (data == undefined) {
                         this.downloadErrorRetry();
                         return;

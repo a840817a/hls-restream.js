@@ -48,6 +48,7 @@ export class DownloadJobFactory implements IDownloadJobFactory {
 @injectable()
 export class MultiVariantListDownloaderFactory implements IMultiVariantListDownloaderFactory {
     constructor(@inject(TYPES.Config) private config: IConfig,
+                @inject(TYPES.Logger) private logger: ILogger,
                 @inject(TYPES.DownloadManager) private downloadManager: IDownloadManager,
                 @inject(TYPES.FileAccess) private fileManager: IFileAccess,
                 @inject(TYPES.VariantListDownloaderItemFactory) private variantListDownloaderItemFactory: IVariantListDownloaderItemFactory,
@@ -57,6 +58,7 @@ export class MultiVariantListDownloaderFactory implements IMultiVariantListDownl
     create(originalUri: string, targetPath: string, source?: string): IMultiVariantListDownloader {
         return new MultiVariantListDownloader(
             this.config,
+            this.logger,
             this.downloadManager,
             this.fileManager,
             this.variantListDownloaderItemFactory,
