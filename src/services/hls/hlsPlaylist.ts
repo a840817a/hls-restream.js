@@ -14,7 +14,7 @@ export class HlsPlaylist implements IHlsPlaylist {
     }
 
     parse(hlsContent: string, uriBase?: string) {
-        if (hlsContent == undefined) return;
+        if (hlsContent == undefined) throw Error('Input undefined!');
 
         const data = hlsContent.split('\n');
         if (data[0] != '#EXTM3U') throw Error('Invalidate hls data!');

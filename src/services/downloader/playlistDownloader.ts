@@ -14,6 +14,7 @@ export class PlaylistDownloader implements IPlaylistDownloader {
     source?: IHlsPlaylist;
     originalUri: string;
     targetPath: string;
+    currentMediaSequence = 0;
     data: IMediaDownloader[] = [];
 
     get fullPath() {
@@ -52,6 +53,7 @@ export class PlaylistDownloader implements IPlaylistDownloader {
         this.source.data.forEach((value, index) => {
             this.data.push(this.mediaDownloaderFactory.create(value, this.targetPath, index));
         });
+        this.currentMediaSequence = data.mediaSequence + data.data.length;
         this.saveFile();
         if (!this.source.completed) setTimeout(this.updateData.bind(this), this.source.targetDuration * 1000);
     }
@@ -75,17 +77,24 @@ export class PlaylistDownloader implements IPlaylistDownloader {
 
         try {
             let newSource = await this.getSource();
-            if (this.source.mediaSequence + this.source.data.length == newSource.mediaSequence + newSource.data.length) {
+            let newMediaSequence = newSource.mediaSequence + newSource.data.length;
+            let newCount = newMediaSequence - this.currentMediaSequence;
+            if (newCount <= 0) {
                 // no new data
                 setTimeout(this.updateData.bind(this), (this.source?.targetDuration / 2) * 1000);
             } else {
-                let newCount = (newSource.mediaSequence + newSource.data.length) - (this.source.mediaSequence + this.source.data.length);
+                let startIndex = newSource.data.length - newCount;
+                if (startIndex < 0) {
+                    this.logger.logError(`Missing frame detected, count ${startIndex * -1}`);
+                    startIndex = 0;
+                }
 
-                for (let i = newSource.data.length - newCount; i < newSource.data.length; i++) {
+                for (let i = startIndex; i < newSource.data.length; i++) {
                     this.data.push(this.mediaDownloaderFactory.create(newSource.data[i], this.targetPath, this.data.length));
                 }
 
                 this.source = newSource;
+                this.currentMediaSequence = newMediaSequence;
                 await this.saveFile();
                 if (!this.source.completed) setTimeout(this.updateData.bind(this), this.source?.targetDuration * 1000);
             }
