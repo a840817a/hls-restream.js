@@ -16,7 +16,7 @@ RUN yarn build
 # Now /usr/src/app/dist has the built files.
 
 # Second stage: run things.
-FROM node:21-alpine
+FROM node:22-alpine
 ENV NODE_ENV production
 WORKDIR /usr/src/app
 
