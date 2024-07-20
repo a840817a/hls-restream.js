@@ -1,5 +1,8 @@
 # hls-restream.js
 
+[![Build and Publish](https://github.com/a840817a/hls-restream.js/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/a840817a/hls-restream.js/actions/workflows/build-and-publish.yml)
+[![CodeQL](https://github.com/a840817a/hls-restream.js/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/a840817a/hls-restream.js/actions/workflows/github-code-scanning/codeql)
+
 `hls-restream.js` is a TypeScript-based application designed for HLS (HTTP Live Streaming) restreaming. It is containerized with Docker for easy deployment.
 
 ## Features
