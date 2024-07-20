@@ -59,7 +59,7 @@ export class MediaController extends BaseHttpController {
                 if (!err) resolve()
                 else reject(err)
             })
-        })
+        });
     }
 
     private Sleep(ms: number) {

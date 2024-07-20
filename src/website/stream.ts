@@ -41,7 +41,7 @@ export class StreamController extends BaseHttpController {
             downloader = target.playList;
         }
 
-        let mediaPrefix = `/media/${id}/`
+        let mediaPrefix = `/media/${id}/`;
         if (variant != undefined) {
             mediaPrefix += `${variant}/`;
         }

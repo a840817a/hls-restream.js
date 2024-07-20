@@ -77,11 +77,11 @@ export class MediaDownloader implements IMediaDownloader {
         if (this.info.key != undefined && this.info.key.method != '') {
             switch (this.info.key.method) {
                 case 'AES-128':
-                    let keyUri = this.info.key.uri
+                    let keyUri = this.info.key.uri;
                     if (!keyUri.match(/^(?:[a-z+]+:)?\/\//)) {
                         keyUri = UrlUtilities.getUrlBase(this.info.uri) + keyUri;
                     }
-                    let key = await this.keyManager.getKey(this.info.key.uri);
+                    let key = await this.keyManager.getKey(keyUri);
                     if (key == undefined) {
                         this.downloadErrorRetry();
                         return;
