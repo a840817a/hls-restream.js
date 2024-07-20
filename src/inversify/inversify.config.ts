@@ -48,7 +48,7 @@ let container = new Container();
 
 container.bind<IConfig>(TYPES.Config).to(Config).inSingletonScope();
 container.bind<ILogger>(TYPES.Logger).to(Logger);
-container.bind<IHttpAccess>(TYPES.HttpAccess).to(HttpAccess);
+container.bind<IHttpAccess>(TYPES.HttpAccess).to(HttpAccess).inSingletonScope();
 container.bind<IFileAccess>(TYPES.FileAccess).to(FileAccess);
 
 container.bind<IStreamManager>(TYPES.StreamManager).to(StreamManager).inSingletonScope();

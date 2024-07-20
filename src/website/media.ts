@@ -52,7 +52,10 @@ export class MediaController extends BaseHttpController {
         }
 
         return new Promise<void>((resolve, reject) => {
-            res.sendFile(`${process.cwd()}/${downloader.fullPath}/${file}`, (err) => {
+            let path = `${downloader.fullPath}/${file}`;
+            if (!path.startsWith('/')) path = `${process.cwd()}/` + path;
+
+            res.sendFile(path, (err) => {
                 if (!err) resolve()
                 else reject(err)
             })

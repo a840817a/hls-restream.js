@@ -4,6 +4,8 @@ import path from "node:path";
 // Set up inversify settings
 import {container} from "./inversify/inversify.config";
 import {InversifyExpressServer} from "inversify-express-utils";
+import {TYPES} from "./definition/types";
+import {IConfig} from "./definition/interface/config";
 
 // Add inversify express utils controllers
 import "./website/api/stream";
@@ -28,5 +30,5 @@ server.setConfig((app) => {
 let app = server.build();
 
 // Start Server
-const port = process.env.PORT || 3001;
-app.listen(port);
+const config = container.get<IConfig>(TYPES.Config);
+app.listen(config.PORT);
