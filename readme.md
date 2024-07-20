@@ -2,6 +2,7 @@
 
 [![Build and Publish](https://github.com/a840817a/hls-restream.js/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/a840817a/hls-restream.js/actions/workflows/build-and-publish.yml)
 [![CodeQL](https://github.com/a840817a/hls-restream.js/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/a840817a/hls-restream.js/actions/workflows/github-code-scanning/codeql)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fa840817a%2Fhls-restream.js.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fa840817a%2Fhls-restream.js?ref=badge_shield)
 
 `hls-restream.js` is a TypeScript-based application designed for HLS (HTTP Live Streaming) restreaming. It is containerized with Docker for easy deployment.
 
@@ -58,3 +59,6 @@ his will start the application and map port 5000 inside the container to port 80
 This project is licensed under the MIT License.
 
 If you have any questions or need further assistance, feel free to reach out.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fa840817a%2Fhls-restream.js.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fa840817a%2Fhls-restream.js?ref=badge_large)
