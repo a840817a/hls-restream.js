@@ -8,4 +8,5 @@ export class Config implements IConfig {
     readonly OUTPUT_PATH = process.env.OUTPUT_PATH || 'output/';
     readonly MAX_ERROR_RETRY = parseInt(process.env.MAX_ERROR_RETRY ?? "") || 3;
     readonly MAX_CONCURRENT_DOWNLOADS = parseInt(process.env.MAX_CONCURRENT_DOWNLOADS ?? "") || 16;
+    readonly NODE_ENV = process.env.NODE_ENV || 'develop';
 }

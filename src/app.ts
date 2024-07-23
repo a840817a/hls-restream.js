@@ -15,6 +15,8 @@ import "./website/player";
 import "./website/stream";
 import "./website/media";
 
+const config = container.get<IConfig>(TYPES.Config);
+
 let server = new InversifyExpressServer(container);
 server.setConfig((app) => {
     app.set('views', path.join(__dirname, './website/views'));
@@ -23,12 +25,14 @@ server.setConfig((app) => {
 
     // set static files
     app.use(express.static(path.join(__dirname, "./website/assets")));
-    app.use('/video-js', express.static(path.join(__dirname, "../node_modules/video.js/dist")));
-    app.use('/bootstrap', express.static(path.join(__dirname, "../node_modules/bootstrap/dist")));
+
+    if (config.NODE_ENV === "development") {
+        app.use('/video-js', express.static(path.join(__dirname, "../node_modules/video.js/dist")));
+        app.use('/bootstrap', express.static(path.join(__dirname, "../node_modules/bootstrap/dist")));
+    }
 });
 
 let app = server.build();
 
 // Start Server
-const config = container.get<IConfig>(TYPES.Config);
 app.listen(config.PORT);

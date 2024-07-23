@@ -8,7 +8,7 @@ import {IHttpAccess} from "../definition/interface/io";
 @injectable()
 export class HttpAccess implements IHttpAccess {
     private readonly client = axios.create({
-        timeout: 10000,
+        timeout: 30000,
         httpsAgent: new https.Agent({ keepAlive: true }),
     });
 

@@ -15,6 +15,14 @@ gulp.task("typescript", function () {
     return tsProject.src().pipe(tsProject()).js.pipe(gulp.dest("dist"));
 });
 
+gulp.task("video-js", function () {
+    return gulp.src("./node_modules/video.js/dist/**/*").pipe(gulp.dest("./dist/website/assets/video-js"));
+});
+
+gulp.task("bootstrap", function () {
+    return gulp.src("./node_modules/bootstrap/dist/**/*").pipe(gulp.dest("./dist/website/assets/bootstrap"));
+});
+
 // Task which would just create a copy of the current views directory in dist directory
 gulp.task("views", function () {
     return gulp.src("./src/website/views/**/*.ejs").pipe(gulp.dest("./dist/website/views"));
@@ -26,6 +34,6 @@ gulp.task("assets", function () {
 });
 
 // The default task which runs at start of the gulpfile.mjs
-gulp.task("default", gulp.series("build-clean", "typescript", "views", "assets"), () => {
+gulp.task("default", gulp.series("build-clean", "typescript", "video-js", "bootstrap", "views", "assets"), () => {
     console.log("Done");
 });
