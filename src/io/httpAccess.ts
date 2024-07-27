@@ -1,4 +1,5 @@
 import axios from "axios";
+import AxiosErrorFormat from "@redtea/format-axios-error";
 import * as https from "node:https";
 
 import {injectable} from "inversify";
@@ -12,21 +13,23 @@ export class HttpAccess implements IHttpAccess {
         httpsAgent: new https.Agent({ keepAlive: true }),
     });
 
-    async download(url: string) {
+    async download(url: string, rawError = false): Promise<void> {
         try {
             const response = await this.client.get(url);
             return response.data;
         } catch (error) {
-            throw error;
+            if (rawError) throw error
+            throw AxiosErrorFormat.format(error);
         }
     }
 
-    async downloadBinary(url: string) {
+    async downloadBinary(url: string, rawError = false) {
         try {
             const response = await this.client.get(url, {responseType: 'arraybuffer'});
             return response.data as Buffer;
         } catch (error) {
-            throw error;
+            if (rawError) throw error
+            throw AxiosErrorFormat.format(error);
         }
     }
 }

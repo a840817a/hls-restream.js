@@ -17,9 +17,9 @@ export interface ILogger {
 }
 
 export interface IHttpAccess {
-    download(url: string): Promise<any>;
+    download(url: string, rawError?: boolean): Promise<any>;
 
-    downloadBinary(url: string): Promise<Buffer | undefined>;
+    downloadBinary(url: string, rawError?: boolean): Promise<Buffer | undefined>;
 }
 
 export interface IFileAccess {
