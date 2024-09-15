@@ -1,8 +1,8 @@
 import {IConfig} from "../../definition/interface/config";
 import {IFileAccess, ILogger} from "../../definition/interface/io";
 import {IDownloadManager} from "../../definition/interface/manager";
-import {IMediaDownloader, IPlaylistDownloader} from "../../definition/interface/downloader";
-import {IHlsPlaylistFactory, IMediaDownloaderFactory} from "../../definition/interface/factory";
+import {IMapDownloader, IMediaDownloader, IPlaylistDownloader} from "../../definition/interface/downloader";
+import {IHlsPlaylistFactory, IMapDownloaderFactory, IMediaDownloaderFactory} from "../../definition/interface/factory";
 
 import {PlaylistType} from "../../definition/enum";
 import {UrlUtilities} from "../../utilities/url";
@@ -15,6 +15,7 @@ export class PlaylistDownloader implements IPlaylistDownloader {
     originalUri: string;
     targetPath: string;
     currentMediaSequence = 0;
+    map?: IMapDownloader;
     data: IMediaDownloader[] = [];
 
     get fullPath() {
@@ -25,6 +26,7 @@ export class PlaylistDownloader implements IPlaylistDownloader {
                        private logger: ILogger,
                        private downloadManager: IDownloadManager,
                        private fileManager: IFileAccess,
+                       private mapDownloaderFactory: IMapDownloaderFactory,
                        private mediaDownloaderFactory: IMediaDownloaderFactory,
                        private hlsPlaylistFactory: IHlsPlaylistFactory,
                        originalUri: string, targetPath: string, source?: string) {
@@ -44,6 +46,8 @@ export class PlaylistDownloader implements IPlaylistDownloader {
         } else {
             this.getSource().then(data => {
                 this.init(data);
+            }).catch((error) => {
+                this.logger.logError(`Cannot get source: ${this.originalUri}\n`, error);
             });
         }
     }
@@ -54,6 +58,10 @@ export class PlaylistDownloader implements IPlaylistDownloader {
             this.data.push(this.mediaDownloaderFactory.create(value, this.targetPath, index));
         });
         this.currentMediaSequence = data.mediaSequence + data.data.length;
+        if (this.source.map !== undefined) {
+            this.map = this.mapDownloaderFactory.create(this.source.map, this.targetPath, "1");
+        }
+
         this.saveFile();
         if (!this.source.completed) setTimeout(this.updateData.bind(this), this.source.targetDuration * 1000);
     }
@@ -99,16 +107,16 @@ export class PlaylistDownloader implements IPlaylistDownloader {
                 if (!this.source.completed) setTimeout(this.updateData.bind(this), this.source?.targetDuration * 1000);
             }
         } catch (e) {
-            this.logger.logError('Unknown error update playlist\n', JSON.stringify(e));
+            this.logger.logError('Unknown error update playlist\n', e);
             setTimeout(this.updateData.bind(this), (this.source?.targetDuration / 2) * 1000);
         }
     }
 
-    generateIndex(pathPrefix?: string, windowSize?: number) {
+    generateIndex(pathPrefix?: string, windowSize?: number, saveFile?: boolean) {
         if (this.source == undefined) return '';
 
         let startIndex = 0;
-        if (windowSize != undefined && this.data.length > windowSize) {
+        if (saveFile != true && windowSize != undefined && this.data.length > windowSize) {
             startIndex = this.data.length - windowSize;
         }
 
@@ -116,8 +124,22 @@ export class PlaylistDownloader implements IPlaylistDownloader {
             `#EXT-X-TARGETDURATION:${this.source.targetDuration}\n` +
             `#EXT-X-MEDIA-SEQUENCE:${startIndex}\n`
 
+        if (this.source.allowCache != undefined) result += `#EXT-X-ALLOW-CACHE:"${this.source.allowCache ? "YES" : "NO"}\n"`;
+        if (this.map != undefined) {
+            let path: string;
+            if (pathPrefix != undefined) {
+                if (pathPrefix.slice(-1) !== '/') pathPrefix += '/';
+                path = `${pathPrefix}${this.map.filename}`
+            }
+            else {
+                path = `${this.map.filename}`
+            }
+
+            result += `#EXT-X-MAP:URI="${path}"\n`;
+        }
+
         for (let i = startIndex; i < this.data.length; i++) {
-            if (this.data[i].downloading) return result;
+            if (saveFile != true && this.data[i].downloading) return result;
             result += `#EXTINF:${this.data[i].info.duration.toFixed(5)},\n`;
 
             if (pathPrefix != undefined) {
@@ -129,12 +151,12 @@ export class PlaylistDownloader implements IPlaylistDownloader {
             }
         }
 
-        if (this.source.completed) result += '#EXT-X-ENDLIST\n';
+        if (saveFile == true || this.source.completed) result += '#EXT-X-ENDLIST\n';
 
         return result;
     }
 
     async saveFile() {
-        this.fileManager.saveFile(`${this.fullPath}/index.m3u8`, this.generateIndex());
+        this.fileManager.saveFile(`${this.fullPath}/index.m3u8`, this.generateIndex(undefined, undefined, true));
     }
 }

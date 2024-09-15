@@ -1,12 +1,14 @@
-import {IHlsMultiVariantList, IHlsStreamInfo} from "../../definition/interface/hls";
-import {IHlsStreamInfoFactory} from "../../definition/interface/factory";
+import {IHlsMediaInfo, IHlsMultiVariantList, IHlsStreamInfo} from "../../definition/interface/hls";
+import {IHlsMediaInfoFactory, IHlsStreamInfoFactory} from "../../definition/interface/factory";
 
 export class HlsMultiVariantList implements IHlsMultiVariantList {
     version: number = 0;
     independentSegments: boolean = false;
+    media: IHlsMediaInfo[] = [];
     data: IHlsStreamInfo[] = [];
 
-    constructor(private hlsStreamInfoFactory: IHlsStreamInfoFactory) {
+    constructor(private hlsStreamInfoFactory: IHlsStreamInfoFactory,
+                private hlsMediaInfoFactory: IHlsMediaInfoFactory) {
     }
 
     parse(hlsContent: string, uriBase?: string) {
@@ -27,6 +29,11 @@ export class HlsMultiVariantList implements IHlsMultiVariantList {
                         break;
                     case '#EXT-X-INDEPENDENT-SEGMENTS':
                         this.independentSegments = true;
+                        break;
+                    case '#EXT-X-MEDIA':
+                        let media = this.hlsMediaInfoFactory.create();
+                        media.parseInfo(tag[1], uriBase);
+                        this.media.push(media);
                         break;
                     case '#EXT-X-STREAM-INF':
                         current.parseInfo(tag[1]);

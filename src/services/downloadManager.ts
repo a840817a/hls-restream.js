@@ -30,7 +30,7 @@ export class DownloadManager implements IDownloadManager {
     async get(url: string, priority: number = 20): Promise<any> {
         return new Promise((resolve, reject) => {
             this.downloadQueue.push({task: new DownloadTask(url, priority), resolve, reject});
-            this.downloadQueue.sort((a, b) => a.task.priority - b.task.priority);
+            this.downloadQueue.sort((a, b) => b.task.priority - a.task.priority);
             this.processQueue();
         });
     }
@@ -38,7 +38,7 @@ export class DownloadManager implements IDownloadManager {
     async getBinary(url: string, priority: number = 20): Promise<Buffer | undefined> {
         return new Promise((resolve, reject) => {
             this.downloadQueue.push({task: new DownloadTask(url, priority, 'binary'), resolve, reject});
-            this.downloadQueue.sort((a, b) => a.task.priority - b.task.priority);
+            this.downloadQueue.sort((a, b) => b.task.priority - a.task.priority);
             this.processQueue();
         });
     }
@@ -75,7 +75,7 @@ export class DownloadManager implements IDownloadManager {
 
     async downloadBinary(url: string, resolve: Function, reject: Function) {
         try {
-            resolve(this.httpAccess.downloadBinary(url));
+            resolve(await this.httpAccess.downloadBinary(url));
         } catch (error) {
             reject(error);
         }

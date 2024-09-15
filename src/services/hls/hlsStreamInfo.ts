@@ -6,6 +6,8 @@ export class HlsStreamInfo implements IHlsStreamInfo {
     codecs: string = '';
     resolution: string = '';
     frameRate: number = 0;
+    subtitles?: string = '';
+    audio?: string = '';
     uri?: string;
 
     constructor() {
@@ -31,6 +33,12 @@ export class HlsStreamInfo implements IHlsStreamInfo {
                     break;
                 case 'FRAME-RATE':
                     this.frameRate = parseFloat(working[1]);
+                    break;
+                case 'SUBTITLES':
+                    this.subtitles = working[1].replace(/"/g, '');
+                    break;
+                case 'AUDIO':
+                    this.audio = working[1].replace(/"/g, '');
                     break;
                 default:
                     console.log(`Unknown Stream Info Item ${working[0]}.`);

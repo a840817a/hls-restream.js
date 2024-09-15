@@ -5,27 +5,32 @@ import {IConfig} from "../../definition/interface/config";
 import {IFileAccess, ILogger} from "../../definition/interface/io";
 import {IDownloadJob, IDownloadManager, IKeyManager} from "../../definition/interface/manager";
 import {
-    IMediaDownloader,
+    IMapDownloader,
+    IMediaDownloader, IMediaListDownloaderItem,
     IMultiVariantListDownloader,
     IPlaylistDownloader,
     IVariantListDownloaderItem
 } from "../../definition/interface/downloader";
-import {IHlsInfo} from "../../definition/interface/hls";
+import {IHlsInfo, IHlsMap, IHlsMediaInfo, IHlsStreamInfo} from "../../definition/interface/hls";
 
 import {
     IDownloadJobFactory,
     IHlsMultiVariantListFactory,
-    IHlsPlaylistFactory,
-    IMediaDownloaderFactory,
+    IHlsPlaylistFactory, IMapDownloaderFactory,
+    IMediaDownloaderFactory, IMediaListDownloaderItemFactory,
     IMultiVariantListDownloaderFactory,
     IPlaylistDownloaderFactory,
     IVariantListDownloaderItemFactory
 } from "../../definition/interface/factory";
 import {MediaDownloader} from "../../services/downloader/mediaDownloader";
-import {HlsStreamInfo} from "../../services/hls/hlsStreamInfo";
-import {MultiVariantListDownloader, VariantListDownloaderItem} from "../../services/downloader/multiVariantListDownloader";
+import {
+    MediaListDownloaderItem,
+    MultiVariantListDownloader,
+    VariantListDownloaderItem
+} from "../../services/downloader/multiVariantListDownloader";
 import {PlaylistDownloader} from "../../services/downloader/playlistDownloader";
 import {DownloadJob} from "../../services/downloadJob";
+import {MapDownloader} from "../../services/downloader/MapDownloader";
 
 @injectable()
 export class DownloadJobFactory implements IDownloadJobFactory {
@@ -51,6 +56,7 @@ export class MultiVariantListDownloaderFactory implements IMultiVariantListDownl
                 @inject(TYPES.Logger) private logger: ILogger,
                 @inject(TYPES.DownloadManager) private downloadManager: IDownloadManager,
                 @inject(TYPES.FileAccess) private fileManager: IFileAccess,
+                @inject(TYPES.MediaListDownloaderItemFactory) private mediaListDownloaderItemFactory: IMediaListDownloaderItemFactory,
                 @inject(TYPES.VariantListDownloaderItemFactory) private variantListDownloaderItemFactory: IVariantListDownloaderItemFactory,
                 @inject(TYPES.HlsMultiVariantListFactory) private hlsMultiVariantListFactory: IHlsMultiVariantListFactory) {
     }
@@ -61,6 +67,7 @@ export class MultiVariantListDownloaderFactory implements IMultiVariantListDownl
             this.logger,
             this.downloadManager,
             this.fileManager,
+            this.mediaListDownloaderItemFactory,
             this.variantListDownloaderItemFactory,
             this.hlsMultiVariantListFactory,
             originalUri, targetPath, source);
@@ -73,6 +80,7 @@ export class PlaylistDownloaderFactory implements IPlaylistDownloaderFactory {
                 @inject(TYPES.Logger) private logger: ILogger,
                 @inject(TYPES.DownloadManager) private downloadManager: IDownloadManager,
                 @inject(TYPES.FileAccess) private fileManager: IFileAccess,
+                @inject(TYPES.MapDownloaderFactory) private mapDownloaderFactory: IMapDownloaderFactory,
                 @inject(TYPES.MediaDownloaderFactory) private mediaDownloaderFactory: IMediaDownloaderFactory,
                 @inject(TYPES.HlsPlaylistFactory) private hlsPlaylistFactory: IHlsPlaylistFactory) {
     }
@@ -83,9 +91,22 @@ export class PlaylistDownloaderFactory implements IPlaylistDownloaderFactory {
             this.logger,
             this.downloadManager,
             this.fileManager,
+            this.mapDownloaderFactory,
             this.mediaDownloaderFactory,
             this.hlsPlaylistFactory,
             originalUri, targetPath, source);
+    }
+}
+
+@injectable()
+export class MediaListDownloaderItemFactory implements IMediaListDownloaderItemFactory {
+    constructor(@inject(TYPES.PlaylistDownloaderFactory) private playlistDownloaderFactory: IPlaylistDownloaderFactory) {
+    }
+
+    create(info: IHlsMediaInfo, id: string, name: string, targetPath: string): IMediaListDownloaderItem {
+        return new MediaListDownloaderItem(
+            this.playlistDownloaderFactory,
+            info, id, name, targetPath);
     }
 }
 
@@ -94,10 +115,28 @@ export class VariantListDownloaderItemFactory implements IVariantListDownloaderI
     constructor(@inject(TYPES.PlaylistDownloaderFactory) private playlistDownloaderFactory: IPlaylistDownloaderFactory) {
     }
 
-    create(info: HlsStreamInfo, name: string, targetPath: string): IVariantListDownloaderItem {
+    create(info: IHlsStreamInfo, id: string, name: string, targetPath: string): IVariantListDownloaderItem {
         return new VariantListDownloaderItem(
             this.playlistDownloaderFactory,
-            info, name, targetPath);
+            info, id, name, targetPath);
+    }
+}
+
+@injectable()
+export class MapDownloaderFactory implements IMapDownloaderFactory {
+    constructor(@inject(TYPES.Config) private config: IConfig,
+                @inject(TYPES.Logger) private logger: ILogger,
+                @inject(TYPES.DownloadManager) private downloadManager: IDownloadManager,
+                @inject(TYPES.FileAccess) private fileManager: IFileAccess) {
+    }
+
+    create(info: IHlsMap, targetPath: string, id: string): IMapDownloader {
+        return new MapDownloader(
+            this.config,
+            this.logger,
+            this.downloadManager,
+            this.fileManager,
+            info, targetPath, id);
     }
 }
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import AxiosErrorFormat from "@redtea/format-axios-error";
+import {format as axiosFormat} from "@redtea/format-axios-error";
 import * as https from "node:https";
 
 import {injectable} from "inversify";
@@ -19,7 +19,7 @@ export class HttpAccess implements IHttpAccess {
             return response.data;
         } catch (error) {
             if (rawError) throw error
-            throw AxiosErrorFormat.format(error);
+            throw axiosFormat(error);
         }
     }
 
@@ -29,7 +29,7 @@ export class HttpAccess implements IHttpAccess {
             return response.data as Buffer;
         } catch (error) {
             if (rawError) throw error
-            throw AxiosErrorFormat.format(error);
+            throw axiosFormat(error);
         }
     }
 }

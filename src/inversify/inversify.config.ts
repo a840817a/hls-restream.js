@@ -12,11 +12,11 @@ import {
 import {
     IDownloadJobFactory,
     IHlsInfoFactory,
-    IHlsKeyFactory,
+    IHlsKeyFactory, IHlsMapFactory, IHlsMediaInfoFactory,
     IHlsMultiVariantListFactory,
     IHlsPlaylistFactory,
-    IHlsStreamInfoFactory,
-    IMediaDownloaderFactory,
+    IHlsStreamInfoFactory, IMapDownloaderFactory,
+    IMediaDownloaderFactory, IMediaListDownloaderItemFactory,
     IMultiVariantListDownloaderFactory,
     IPlaylistDownloaderFactory,
     IVariantListDownloaderItemFactory
@@ -31,19 +31,18 @@ import {StreamManager} from "../services/streamManager";
 import {DownloadManager} from "../services/downloadManager";
 import {KeyManager} from "../services/keyManager";
 import {
-    DownloadJobFactory,
-    MediaDownloaderFactory, MultiVariantListDownloaderFactory,
+    DownloadJobFactory, MapDownloaderFactory,
+    MediaDownloaderFactory, MediaListDownloaderItemFactory, MultiVariantListDownloaderFactory,
     PlaylistDownloaderFactory,
     VariantListDownloaderItemFactory
 } from "./factory/downloader";
 import {
     HlsInfoFactory,
-    HlsKeyFactory,
+    HlsKeyFactory, HlsMapFactory, HlsMediaInfoFactory,
     HlsMultiVariantListFactory,
     HlsPlaylistFactory,
     HlsStreamInfoFactory
 } from "./factory/hls";
-
 let container = new Container();
 
 container.bind<IConfig>(TYPES.Config).to(Config).inSingletonScope();
@@ -58,13 +57,17 @@ container.bind<IKeyManager>(TYPES.KeyManager).to(KeyManager).inSingletonScope();
 container.bind<IDownloadJobFactory>(TYPES.DownloadJobFactory).to(DownloadJobFactory)
 container.bind<IMultiVariantListDownloaderFactory>(TYPES.MultiVariantListDownloaderFactory).to(MultiVariantListDownloaderFactory)
 container.bind<IPlaylistDownloaderFactory>(TYPES.PlaylistDownloaderFactory).to(PlaylistDownloaderFactory)
+container.bind<IMediaListDownloaderItemFactory>(TYPES.MediaListDownloaderItemFactory).to(MediaListDownloaderItemFactory)
 container.bind<IVariantListDownloaderItemFactory>(TYPES.VariantListDownloaderItemFactory).to(VariantListDownloaderItemFactory)
+container.bind<IMapDownloaderFactory>(TYPES.MapDownloaderFactory).to(MapDownloaderFactory)
 container.bind<IMediaDownloaderFactory>(TYPES.MediaDownloaderFactory).to(MediaDownloaderFactory)
 
 container.bind<IHlsMultiVariantListFactory>(TYPES.HlsMultiVariantListFactory).to(HlsMultiVariantListFactory)
+container.bind<IHlsMediaInfoFactory>(TYPES.HlsMediaInfoFactory).to(HlsMediaInfoFactory)
 container.bind<IHlsStreamInfoFactory>(TYPES.HlsStreamInfoFactory).to(HlsStreamInfoFactory)
 container.bind<IHlsPlaylistFactory>(TYPES.HlsPlaylistFactory).to(HlsPlaylistFactory)
 container.bind<IHlsInfoFactory>(TYPES.HlsInfoFactory).to(HlsInfoFactory)
 container.bind<IHlsKeyFactory>(TYPES.HlsKeyFactory).to(HlsKeyFactory)
+container.bind<IHlsMapFactory>(TYPES.HlsMapFactory).to(HlsMapFactory)
 
 export { container };

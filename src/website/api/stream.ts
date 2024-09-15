@@ -45,12 +45,17 @@ export class StreamManagerController extends BaseHttpController {
             return this.badRequest('Missing Parameter');
         }
 
-        const job = this.streamManager.add(input.name, input.url);
-        return this.json({
-            id: job.id,
-            title: job.title,
-            sourceUrl: job.sourceUrl,
-            playerLink: job.playerLink,
-        });
+        try {
+            const job = this.streamManager.add(input.name, input.url);
+            return this.json({
+                id: job.id,
+                title: job.title,
+                sourceUrl: job.sourceUrl,
+                playerLink: job.playerLink,
+            });
+        }
+        catch (error) {
+            return this.badRequest('Can not get hls');
+        }
     }
 }

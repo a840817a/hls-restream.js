@@ -13,12 +13,16 @@ export const TYPES = {
     DownloadJobFactory: Symbol.for("IDownloadJobFactory"),
     MultiVariantListDownloaderFactory: Symbol.for("IMultiVariantListDownloaderFactory"),
     PlaylistDownloaderFactory: Symbol.for("IPlaylistDownloaderFactory"),
+    MediaListDownloaderItemFactory: Symbol.for("IMediaListDownloaderItemFactory"),
     VariantListDownloaderItemFactory: Symbol.for("IVariantListDownloaderItemFactory"),
+    MapDownloaderFactory: Symbol.for("IMapDownloaderFactory"),
     MediaDownloaderFactory: Symbol.for("IMediaDownloaderFactory"),
 
     HlsMultiVariantListFactory: Symbol.for("IHlsMultiVariantListFactory"),
+    HlsMediaInfoFactory: Symbol.for("IHlsMediaInfoFactory"),
     HlsStreamInfoFactory: Symbol.for("IHlsStreamInfoFactory"),
     HlsPlaylistFactory: Symbol.for("IHlsPlaylistFactory"),
     HlsInfoFactory: Symbol.for("IHlsInfoFactory"),
     HlsKeyFactory: Symbol.for("IHlsKeyFactory"),
+    HlsMapFactory: Symbol.for("IHlsMapFactory"),
 };

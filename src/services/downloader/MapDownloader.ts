@@ -1,24 +1,23 @@
 import {IConfig} from "../../definition/interface/config";
 import {IFileAccess, ILogger} from "../../definition/interface/io";
-import {IDownloadManager, IKeyManager} from "../../definition/interface/manager";
-import {IMediaDownloader} from "../../definition/interface/downloader";
-import {IHlsInfo} from "../../definition/interface/hls";
+import {IDownloadManager} from "../../definition/interface/manager";
+import {IMapDownloader} from "../../definition/interface/downloader";
+import {IHlsMap} from "../../definition/interface/hls";
 
 import {DownloadStatus} from "../../definition/enum";
 import {UrlUtilities} from "../../utilities/url";
-import {EncryptionUtilities} from "../../utilities/encryption";
 
 
-export class MediaDownloader implements IMediaDownloader {
-    info: IHlsInfo;
+export class MapDownloader implements IMapDownloader {
+    info: IHlsMap;
     status: DownloadStatus;
-    sequence: number;
+    id: string;
     targetPath: string;
     fileExtension: string;
     private errorCount: number = 0
 
     get filename() {
-        return `media_${this.sequence}.${this.fileExtension}`;
+        return `map_${this.id}.${this.fileExtension}`;
     }
 
     get fullPath() {
@@ -38,11 +37,10 @@ export class MediaDownloader implements IMediaDownloader {
         private logger: ILogger,
         private downloadManager: IDownloadManager,
         private fileManager: IFileAccess,
-        private keyManager: IKeyManager,
-        info: IHlsInfo, targetPath: string, sequence: number
+        info: IHlsMap, targetPath: string, id: string
     ) {
         this.info = info;
-        this.sequence = sequence
+        this.id = id
         this.targetPath = targetPath
         this.status = DownloadStatus.downloading;
 
@@ -60,39 +58,18 @@ export class MediaDownloader implements IMediaDownloader {
     async getSource() {
         let data: Buffer | undefined;
         try {
-            data = await this.downloadManager.getBinary(this.info.uri, 20 + this.errorCount);
+            data = await this.downloadManager.getBinary(this.info.uri, 25 + this.errorCount);
         }
         catch (error) {
-            this.logger.logError('Cannot get media from uri: ' + this.info.uri, error);
+            this.logger.logError('Cannot get map from uri: ' + this.info.uri, error);
             this.downloadErrorRetry();
             return;
         }
 
         if (data == undefined) {
-            this.logger.logError('Cannot get media, response empty');
+            this.logger.logError('Cannot get map, response empty');
             this.downloadErrorRetry();
             return;
-        }
-
-        if (this.info.key != undefined && this.info.key.method != '') {
-            switch (this.info.key.method) {
-                case 'AES-128':
-                    let key = await this.keyManager.getKey(this.info.key.uri);
-                    if (key == undefined) {
-                        this.downloadErrorRetry();
-                        return;
-                    }
-
-                    data = EncryptionUtilities.DecryptAes128Data(data, key, this.info.key.iv);
-                    if (data == undefined) {
-                        this.downloadErrorRetry();
-                        return;
-                    }
-                    break;
-                default:
-                    this.logger.logError('Unknown Encrypt method');
-                    this.status = DownloadStatus.failed;
-            }
         }
 
         this.fileManager.saveFile(this.fullPath, data);
@@ -106,6 +83,6 @@ export class MediaDownloader implements IMediaDownloader {
             return
         }
 
-        setTimeout(this.getSource.bind(this), (this.info.duration / 2) * 1000);
+        setTimeout(this.getSource.bind(this), 2000);
     }
 }

@@ -32,7 +32,11 @@ export class MediaController extends BaseHttpController {
                 return;
             }
 
-            const target = (downloader as IMultiVariantListDownloader).data.find(data => data.name == variant);
+            const targetPlaylist = (downloader as IMultiVariantListDownloader);
+
+            const target = variant.startsWith("media") ?
+                targetPlaylist.media.find(data => data.id == variant):
+                targetPlaylist.data.find(data => data.id == variant);
             if (target == undefined) {
                 res.status(404).send('Not found');
                 return;
@@ -41,7 +45,9 @@ export class MediaController extends BaseHttpController {
             downloader = target.playList;
         }
 
-        let media = (downloader as IPlaylistDownloader).data.find(data => data.filename == file);
+        let playlist = (downloader as IPlaylistDownloader);
+
+        let media = file.startsWith("map") ? playlist.map : playlist.data.find(data => data.filename == file);
         if (media == undefined) {
             res.status(404).send('Not found');
             return;

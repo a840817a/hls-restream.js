@@ -43,7 +43,7 @@ export class DownloadJob implements IDownloadJob {
                 this.downloader = this.playlistDownloaderFactory.create(this.sourceUrl, this.id, result);
             }
         } catch (error) {
-            this.logger.logError(`Error downloading file: ${this.sourceUrl}\n`, JSON.stringify(error));
+            this.logger.logError(`Error downloading file: ${this.sourceUrl}\n`, error);
             this.downloader =  undefined;
         }
     }

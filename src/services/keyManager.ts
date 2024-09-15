@@ -21,7 +21,7 @@ export class KeyManager implements IKeyManager {
             download = await this.downloadManager.getBinary(uri, 50);
         }
         catch (error) {
-            this.logger.logError('Cannot get key, Error:', JSON.stringify(error));
+            this.logger.logError('Cannot get key from uri: ' + uri, error);
             return undefined;
         }
 
