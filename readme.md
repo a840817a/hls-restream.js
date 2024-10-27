@@ -41,6 +41,11 @@ docker container run --name hls-restream -p 80:5000 -v output:/usr/src/hls-restr
 ```
 his will start the application and map port 5000 inside the container to port 80 on your host machine. The output will be stored in the output directory.
 
+## Start To use
+
+To you use system
+Open the browser and navigate to http://hostname/manage
+
 ## Scripts
 
 - `build`: Compiles the TypeScript code using Gulp.
