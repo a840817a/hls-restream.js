@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@redtea/format-axios-error": "2.1.1",
-    "axios": "1.7.7",
+    "axios": "1.7.9",
     "ejs": "3.1.10",
-    "express": "4.21.1",
-    "inversify": "6.0.3",
-    "inversify-express-utils": "6.4.7",
+    "express": "4.21.2",
+    "inversify": "6.1.6",
+    "inversify-express-utils": "6.4.9",
     "reflect-metadata": "0.2.2",
     "tslog": "4.9.3",
     "url-join": "5.0.0"
@@ -25,14 +25,14 @@
     "@types/ejs": "3",
     "@types/express": "5.0.0",
     "@types/gulp": "4.0.17",
-    "@types/node": "22.8.1",
+    "@types/node": "22.10.1",
     "bootstrap": "5.3.3",
     "del": "8.0.0",
     "gulp": "5.0.0",
     "gulp-typescript": "6.0.0-alpha.1",
     "nodemon": "3.1.7",
-    "typescript": "5.6.3",
-    "video.js": "8.19.1"
+    "typescript": "5.7.2",
+    "video.js": "8.21.0"
   },
-  "packageManager": "yarn@4.4.1"
+  "packageManager": "yarn@4.5.3"
 }
