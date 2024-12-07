@@ -18,7 +18,7 @@ RUN yarn build
 
 # Second stage: run things.
 FROM node:22-alpine
-ENV NODE_ENV production
+ENV NODE_ENV=production
 WORKDIR /usr/src/hls-restream
 
 # (Install OS dependencies; just libraries.)
@@ -34,7 +34,7 @@ COPY --from=build /usr/src/app/dist .
 
 # Run the built application when the container starts.
 RUN mkdir /usr/src/hls-restream/output
-ENV OUTPUT_PATH "/usr/src/hls-restream/output/"
+ENV OUTPUT_PATH="/usr/src/hls-restream/output/"
 
 EXPOSE 5000
-CMD node app.js
+CMD ["node", "app.js"]
