@@ -14,8 +14,8 @@
     "axios": "1.7.9",
     "ejs": "3.1.10",
     "express": "4.21.2",
-    "inversify": "6.1.6",
-    "inversify-express-utils": "6.4.9",
+    "inversify": "6.2.2",
+    "inversify-express-utils": "6.4.10",
     "reflect-metadata": "0.2.2",
     "tslog": "4.9.3",
     "url-join": "5.0.0"
@@ -25,14 +25,14 @@
     "@types/ejs": "3",
     "@types/express": "5.0.0",
     "@types/gulp": "4.0.17",
-    "@types/node": "22.10.1",
+    "@types/node": "22.13.1",
     "bootstrap": "5.3.3",
     "del": "8.0.0",
     "gulp": "5.0.0",
     "gulp-typescript": "6.0.0-alpha.1",
-    "nodemon": "3.1.7",
-    "typescript": "5.7.2",
+    "nodemon": "3.1.9",
+    "typescript": "5.7.3",
     "video.js": "8.21.0"
   },
-  "packageManager": "yarn@4.5.3"
+  "packageManager": "yarn@4.6.0"
 }
