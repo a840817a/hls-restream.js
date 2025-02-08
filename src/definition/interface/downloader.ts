@@ -6,6 +6,7 @@ export interface IHlsDownloader {
     source?: IHlsFile;
     targetPath: string;
     originalUri: string;
+    headers: string | undefined;
     fullPath: string;
 
     generateIndex: (mediaPathPrefix?: string, windowSize?: number, saveFile?: boolean) => string;
@@ -29,6 +30,7 @@ export interface IPlaylistDownloader extends IHlsDownloader {
 
 export interface IMapDownloader {
     info: IHlsMap;
+    headers: string | undefined;
     status: DownloadStatus;
     id: string;
     targetPath: string;
@@ -41,6 +43,7 @@ export interface IMapDownloader {
 
 export interface IMediaDownloader {
     info: IHlsInfo;
+    headers: string | undefined;
     status: DownloadStatus;
     sequence: number;
     targetPath: string;
@@ -56,6 +59,7 @@ export interface IMediaListDownloaderItem {
     name: string;
     info: IHlsMediaInfo;
     playList: IPlaylistDownloader;
+    headers: string | undefined;
 }
 
 export interface IVariantListDownloaderItem {
@@ -63,4 +67,5 @@ export interface IVariantListDownloaderItem {
     name: string;
     info: IHlsStreamInfo;
     playList: IPlaylistDownloader;
+    headers: string | undefined;
 }

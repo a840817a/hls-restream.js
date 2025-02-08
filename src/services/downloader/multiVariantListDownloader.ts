@@ -23,6 +23,7 @@ export class MultiVariantListDownloader implements IMultiVariantListDownloader {
     source?: IHlsMultiVariantList;
     targetPath: string;
     originalUri: string;
+    headers: string | undefined;
     media: IMediaListDownloaderItem[] = [];
     data: IVariantListDownloaderItem[] = [];
 
@@ -34,10 +35,11 @@ export class MultiVariantListDownloader implements IMultiVariantListDownloader {
         private mediaListDownloaderItemFactory: IMediaListDownloaderItemFactory,
         private variantListDownloaderItemFactory: IVariantListDownloaderItemFactory,
         private hlsMultiVariantListFactory: IHlsMultiVariantListFactory,
-        originalUri: string, targetPath: string, source?: string
+        originalUri: string, targetPath: string, headers?: string, source?: string
     ) {
         this.originalUri = originalUri;
         this.targetPath = targetPath;
+        this.headers = headers;
 
         this.logger.setClassName((this as any).constructor.name);
 
@@ -64,13 +66,13 @@ export class MultiVariantListDownloader implements IMultiVariantListDownloader {
         {
             const name = UrlUtilities.getUrlFilename(this.source.media[i].uri ?? 'default')!;
             const id = `media_${i + 1}`;
-            this.media.push(this.mediaListDownloaderItemFactory.create(this.source.media[i], id, name, `${this.targetPath}/${id}`));
+            this.media.push(this.mediaListDownloaderItemFactory.create(this.source.media[i], id, name, `${this.targetPath}/${id}`, this.headers));
         }
         for (let i = 0; i < this.source.data.length; i++)
         {
             const name = UrlUtilities.getUrlFilename(this.source.data[i].uri ?? 'default')!;
             const id = `stream_${i + 1}`;
-            this.data.push(this.variantListDownloaderItemFactory.create(this.source.data[i], id, name, `${this.targetPath}/${id}`));
+            this.data.push(this.variantListDownloaderItemFactory.create(this.source.data[i], id, name, `${this.targetPath}/${id}`, this.headers));
         }
         this.saveFile();
     }
@@ -78,7 +80,7 @@ export class MultiVariantListDownloader implements IMultiVariantListDownloader {
     async getSource() {
         let data: any;
         try {
-            data = await this.downloadManager.get(this.originalUri, 30);
+            data = await this.downloadManager.get(this.originalUri, 30, this.headers);
         }
         catch (e) {
             throw e;
@@ -142,14 +144,15 @@ export class MediaListDownloaderItem implements IMediaListDownloaderItem {
     name: string;
     info: IHlsMediaInfo;
     playList: IPlaylistDownloader;
+    headers: string | undefined;
 
     constructor(playlistDownloaderFactory: IPlaylistDownloaderFactory,
-                info: IHlsMediaInfo, id: string, name: string, targetPath: string) {
+                info: IHlsMediaInfo, id: string, name: string, targetPath: string, headers?: string) {
         if (info.uri == undefined) throw Error("No Download Url!");
         this.id = id
         this.info = info;
         this.name = name;
-        this.playList = playlistDownloaderFactory.create(info.uri, targetPath);
+        this.playList = playlistDownloaderFactory.create(info.uri, targetPath, headers);
     }
 }
 
@@ -158,13 +161,14 @@ export class VariantListDownloaderItem implements IVariantListDownloaderItem {
     name: string;
     info: IHlsStreamInfo;
     playList: IPlaylistDownloader;
+    headers: string | undefined;
 
     constructor(playlistDownloaderFactory: IPlaylistDownloaderFactory,
-                info: IHlsStreamInfo, id: string, name: string, targetPath: string) {
+                info: IHlsStreamInfo, id: string, name: string, targetPath: string, headers?: string) {
         if (info.uri == undefined) throw Error("No Download Url!");
         this.id = id
         this.info = info;
         this.name = name;
-        this.playList = playlistDownloaderFactory.create(info.uri, targetPath);
+        this.playList = playlistDownloaderFactory.create(info.uri, targetPath, headers);
     }
 }

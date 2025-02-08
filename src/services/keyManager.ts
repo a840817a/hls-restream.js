@@ -13,24 +13,31 @@ export class KeyManager implements IKeyManager {
         this.logger.setClassName((this as any).constructor.name);
     }
 
-    async getKey(uri: string) {
-        if (uri in this.keys) return this.keys[uri];
+    async getKey(uri: string, headers?: string) {
+        const keyObj = {
+            uri: uri,
+            headers: headers
+        };
+
+        const keyId = JSON.stringify(keyObj);
+
+        if (keyId in this.keys) return this.keys[keyId];
         let download: Buffer | undefined;
 
         try {
-            download = await this.downloadManager.getBinary(uri, 50);
+            download = await this.downloadManager.getBinary(uri, 50, headers);
         }
         catch (error) {
-            this.logger.logError('Cannot get key from uri: ' + uri, error);
+            this.logger.logError('Cannot get key from: ' + keyId, error);
             return undefined;
         }
 
         if (download == undefined) {
-            this.logger.logError('Cannot get key,  response empty');
+            this.logger.logError('Cannot get key: ' + keyId + ' response empty');
             return undefined;
         }
 
-        this.keys[uri] = download;
+        this.keys[keyId] = download;
         return download;
     }
 }

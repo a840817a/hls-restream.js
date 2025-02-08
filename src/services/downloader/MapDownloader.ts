@@ -10,6 +10,7 @@ import {UrlUtilities} from "../../utilities/url";
 
 export class MapDownloader implements IMapDownloader {
     info: IHlsMap;
+    headers: string | undefined;
     status: DownloadStatus;
     id: string;
     targetPath: string;
@@ -37,11 +38,12 @@ export class MapDownloader implements IMapDownloader {
         private logger: ILogger,
         private downloadManager: IDownloadManager,
         private fileManager: IFileAccess,
-        info: IHlsMap, targetPath: string, id: string
+        info: IHlsMap, targetPath: string, id: string, headers?: string
     ) {
         this.info = info;
         this.id = id
         this.targetPath = targetPath
+        this.headers = headers
         this.status = DownloadStatus.downloading;
 
         this.logger.setClassName((this as any).constructor.name);
@@ -58,7 +60,7 @@ export class MapDownloader implements IMapDownloader {
     async getSource() {
         let data: Buffer | undefined;
         try {
-            data = await this.downloadManager.getBinary(this.info.uri, 25 + this.errorCount);
+            data = await this.downloadManager.getBinary(this.info.uri, 25 + this.errorCount, this.headers);
         }
         catch (error) {
             this.logger.logError('Cannot get map from uri: ' + this.info.uri, error);

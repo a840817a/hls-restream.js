@@ -40,13 +40,13 @@ export class DownloadJobFactory implements IDownloadJobFactory {
                 @inject(TYPES.PlaylistDownloaderFactory) private playlistDownloaderFactory: IPlaylistDownloaderFactory) {
     }
 
-    create(title: string, sourceUrl: string): IDownloadJob {
+    create(title: string, sourceUrl: string, headers: string | undefined): IDownloadJob {
         return new DownloadJob(
             this.logger,
             this.downloadManager,
             this.multiVariantListDownloaderFactory,
             this.playlistDownloaderFactory,
-            title, sourceUrl);
+            title, sourceUrl, headers);
     }
 }
 
@@ -61,7 +61,7 @@ export class MultiVariantListDownloaderFactory implements IMultiVariantListDownl
                 @inject(TYPES.HlsMultiVariantListFactory) private hlsMultiVariantListFactory: IHlsMultiVariantListFactory) {
     }
 
-    create(originalUri: string, targetPath: string, source?: string): IMultiVariantListDownloader {
+    create(originalUri: string, targetPath: string, headers?: string, source?: string): IMultiVariantListDownloader {
         return new MultiVariantListDownloader(
             this.config,
             this.logger,
@@ -70,7 +70,7 @@ export class MultiVariantListDownloaderFactory implements IMultiVariantListDownl
             this.mediaListDownloaderItemFactory,
             this.variantListDownloaderItemFactory,
             this.hlsMultiVariantListFactory,
-            originalUri, targetPath, source);
+            originalUri, targetPath, headers, source);
     }
 }
 
@@ -85,7 +85,7 @@ export class PlaylistDownloaderFactory implements IPlaylistDownloaderFactory {
                 @inject(TYPES.HlsPlaylistFactory) private hlsPlaylistFactory: IHlsPlaylistFactory) {
     }
 
-    create(originalUri: string, targetPath: string, source?: string): IPlaylistDownloader {
+    create(originalUri: string, targetPath: string, headers?: string, source?: string): IPlaylistDownloader {
         return new PlaylistDownloader(
             this.config,
             this.logger,
@@ -94,7 +94,7 @@ export class PlaylistDownloaderFactory implements IPlaylistDownloaderFactory {
             this.mapDownloaderFactory,
             this.mediaDownloaderFactory,
             this.hlsPlaylistFactory,
-            originalUri, targetPath, source);
+            originalUri, targetPath, headers, source);
     }
 }
 
@@ -103,10 +103,10 @@ export class MediaListDownloaderItemFactory implements IMediaListDownloaderItemF
     constructor(@inject(TYPES.PlaylistDownloaderFactory) private playlistDownloaderFactory: IPlaylistDownloaderFactory) {
     }
 
-    create(info: IHlsMediaInfo, id: string, name: string, targetPath: string): IMediaListDownloaderItem {
+    create(info: IHlsMediaInfo, id: string, name: string, targetPath: string, headers?: string): IMediaListDownloaderItem {
         return new MediaListDownloaderItem(
             this.playlistDownloaderFactory,
-            info, id, name, targetPath);
+            info, id, name, targetPath, headers);
     }
 }
 
@@ -115,10 +115,10 @@ export class VariantListDownloaderItemFactory implements IVariantListDownloaderI
     constructor(@inject(TYPES.PlaylistDownloaderFactory) private playlistDownloaderFactory: IPlaylistDownloaderFactory) {
     }
 
-    create(info: IHlsStreamInfo, id: string, name: string, targetPath: string): IVariantListDownloaderItem {
+    create(info: IHlsStreamInfo, id: string, name: string, targetPath: string, headers?: string): IVariantListDownloaderItem {
         return new VariantListDownloaderItem(
             this.playlistDownloaderFactory,
-            info, id, name, targetPath);
+            info, id, name, targetPath, headers);
     }
 }
 
@@ -130,13 +130,13 @@ export class MapDownloaderFactory implements IMapDownloaderFactory {
                 @inject(TYPES.FileAccess) private fileManager: IFileAccess) {
     }
 
-    create(info: IHlsMap, targetPath: string, id: string): IMapDownloader {
+    create(info: IHlsMap, targetPath: string, id: string, headers?: string): IMapDownloader {
         return new MapDownloader(
             this.config,
             this.logger,
             this.downloadManager,
             this.fileManager,
-            info, targetPath, id);
+            info, targetPath, id, headers);
     }
 }
 
@@ -149,13 +149,13 @@ export class MediaDownloaderFactory implements IMediaDownloaderFactory {
                 @inject(TYPES.KeyManager) private keyManager: IKeyManager) {
     }
 
-    create(info: IHlsInfo, targetPath: string, sequence: number): IMediaDownloader {
+    create(info: IHlsInfo, targetPath: string, sequence: number, headers?: string): IMediaDownloader {
         return new MediaDownloader(
             this.config,
             this.logger,
             this.downloadManager,
             this.fileManager,
             this.keyManager,
-            info, targetPath, sequence);
+            info, targetPath, sequence, headers);
     }
 }

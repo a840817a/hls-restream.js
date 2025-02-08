@@ -14,6 +14,7 @@ export class PlaylistDownloader implements IPlaylistDownloader {
     source?: IHlsPlaylist;
     originalUri: string;
     targetPath: string;
+    headers: string | undefined;
     currentMediaSequence = 0;
     map?: IMapDownloader;
     data: IMediaDownloader[] = [];
@@ -29,9 +30,10 @@ export class PlaylistDownloader implements IPlaylistDownloader {
                        private mapDownloaderFactory: IMapDownloaderFactory,
                        private mediaDownloaderFactory: IMediaDownloaderFactory,
                        private hlsPlaylistFactory: IHlsPlaylistFactory,
-                       originalUri: string, targetPath: string, source?: string) {
+                       originalUri: string, targetPath: string, headers?: string, source?: string) {
         this.originalUri = originalUri;
         this.targetPath = targetPath;
+        this.headers = headers;
 
         this.logger.setClassName((this as any).constructor.name);
 
@@ -69,7 +71,7 @@ export class PlaylistDownloader implements IPlaylistDownloader {
     async getSource() {
         let data: any;
         try {
-            data = await this.downloadManager.get(this.originalUri, 30);
+            data = await this.downloadManager.get(this.originalUri, 30, this.headers);
         }
         catch (e) {
             throw e;

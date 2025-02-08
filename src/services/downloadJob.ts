@@ -12,6 +12,7 @@ export class DownloadJob implements IDownloadJob {
     id: string;
     title: string | undefined;
     sourceUrl: string;
+    headers: string | undefined;
     downloader?: IHlsDownloader;
 
     get playerLink(): string {
@@ -22,25 +23,26 @@ export class DownloadJob implements IDownloadJob {
                 @inject(TYPES.DownloadManager) private downloadManager: IDownloadManager,
                 @inject(TYPES.MultiVariantListDownloaderFactory) private multiVariantListDownloaderFactory: IMultiVariantListDownloaderFactory,
                 @inject(TYPES.PlaylistDownloaderFactory) private playlistDownloaderFactory: IPlaylistDownloaderFactory,
-                title: string | undefined, sourceUrl: string) {
+                title: string | undefined, sourceUrl: string, headers?: string) {
         this.logger.setClassName((this as any).constructor.name);
 
         this.id = crypto.randomUUID();
         this.title = title;
         this.sourceUrl = sourceUrl;
+        this.headers = headers;
 
         this.downloadHls();
     }
 
     async downloadHls() {
         try {
-            const result = await this.downloadManager.get(this.sourceUrl, 30);
+            const result = await this.downloadManager.get(this.sourceUrl, 30, this.headers);
 
             if (result.includes('#EXT-X-STREAM-INF')) {
-                this.downloader =  this.multiVariantListDownloaderFactory.create(this.sourceUrl, this.id, result);
+                this.downloader =  this.multiVariantListDownloaderFactory.create(this.sourceUrl, this.id, this.headers, result);
             }
             else {
-                this.downloader = this.playlistDownloaderFactory.create(this.sourceUrl, this.id, result);
+                this.downloader = this.playlistDownloaderFactory.create(this.sourceUrl, this.id, this.headers, result);
             }
         } catch (error) {
             this.logger.logError(`Error downloading file: ${this.sourceUrl}\n`, error);

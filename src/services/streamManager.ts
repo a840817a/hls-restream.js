@@ -18,8 +18,8 @@ export class StreamManager implements IStreamManager {
         return this.streamList[id];
     }
 
-    add(title: string | undefined, url: string): IDownloadJob {
-        const job = this.downloadJobFactory.create(title, url);
+    add(title: string | undefined, url: string, headers?: string): IDownloadJob {
+        const job = this.downloadJobFactory.create(title, url, headers);
         this.streamList[job.id] = job;
         return job;
     }

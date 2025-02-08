@@ -4,16 +4,16 @@ export interface IStreamManager {
     getList(): IDownloadJob[];
 
     get(id: string): IDownloadJob;
-    add(title: string | undefined, url: string): IDownloadJob;
+    add(title: string | undefined, url: string, headers?: string): IDownloadJob;
 }
 
 export interface IDownloadManager {
-    get(url: string, priority?: number): Promise<any>;
-    getBinary(url: string, priority?: number): Promise<Buffer | undefined>;
+    get(url: string, priority?: number, headers?: string): Promise<any>;
+    getBinary(url: string, priority?: number, headers?: string): Promise<Buffer | undefined>;
 }
 
 export interface IKeyManager {
-    getKey(uri: string): Promise<any>;
+    getKey(uri: string, headers?: string): Promise<any>;
 }
 
 export interface IDownloadJob {
@@ -21,6 +21,7 @@ export interface IDownloadJob {
     title: string | undefined;
     sourceUrl: string;
     playerLink: string;
+    headers: string | undefined;
     downloader?: IHlsDownloader;
 }
 

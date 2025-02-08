@@ -40,13 +40,13 @@ export class StreamManagerController extends BaseHttpController {
     }
 
     @httpPost("/")
-    private add(@requestBody() input: { name?: string; url?: string; }) {
+    private add(@requestBody() input: { name?: string; url?: string; headers?: string; }) {
         if (input.url == undefined) {
             return this.badRequest('Missing Parameter');
         }
 
         try {
-            const job = this.streamManager.add(input.name, input.url);
+            const job = this.streamManager.add(input.name, input.url, input.headers);
             return this.json({
                 id: job.id,
                 title: job.title,

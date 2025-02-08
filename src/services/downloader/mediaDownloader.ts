@@ -11,6 +11,7 @@ import {EncryptionUtilities} from "../../utilities/encryption";
 
 export class MediaDownloader implements IMediaDownloader {
     info: IHlsInfo;
+    headers: string | undefined;
     status: DownloadStatus;
     sequence: number;
     targetPath: string;
@@ -39,11 +40,12 @@ export class MediaDownloader implements IMediaDownloader {
         private downloadManager: IDownloadManager,
         private fileManager: IFileAccess,
         private keyManager: IKeyManager,
-        info: IHlsInfo, targetPath: string, sequence: number
+        info: IHlsInfo, targetPath: string, sequence: number, headers?: string
     ) {
         this.info = info;
         this.sequence = sequence
         this.targetPath = targetPath
+        this.headers = headers
         this.status = DownloadStatus.downloading;
 
         this.logger.setClassName((this as any).constructor.name);
@@ -60,7 +62,7 @@ export class MediaDownloader implements IMediaDownloader {
     async getSource() {
         let data: Buffer | undefined;
         try {
-            data = await this.downloadManager.getBinary(this.info.uri, 20 + this.errorCount);
+            data = await this.downloadManager.getBinary(this.info.uri, 20 + this.errorCount, this.headers);
         }
         catch (error) {
             this.logger.logError('Cannot get media from uri: ' + this.info.uri, error);
@@ -77,7 +79,7 @@ export class MediaDownloader implements IMediaDownloader {
         if (this.info.key != undefined && this.info.key.method != '') {
             switch (this.info.key.method) {
                 case 'AES-128':
-                    let key = await this.keyManager.getKey(this.info.key.uri);
+                    let key = await this.keyManager.getKey(this.info.key.uri, this.headers);
                     if (key == undefined) {
                         this.downloadErrorRetry();
                         return;

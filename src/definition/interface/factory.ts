@@ -9,32 +9,32 @@ import {IDownloadJob} from "./manager";
 import {IHlsInfo, IHlsKey, IHlsMap, IHlsMediaInfo, IHlsMultiVariantList, IHlsPlaylist, IHlsStreamInfo} from "./hls";
 
 export interface IDownloadJobFactory {
-    create(title: string | undefined, sourceUrl: string): IDownloadJob;
+    create(title: string | undefined, sourceUrl: string, headers?: string): IDownloadJob;
 }
 
 
 export interface IMultiVariantListDownloaderFactory {
-    create(originalUri: string, targetPath: string, source?: string): IMultiVariantListDownloader;
+    create(originalUri: string, targetPath: string, headers?: string, source?: string): IMultiVariantListDownloader;
 }
 
 export interface IPlaylistDownloaderFactory {
-    create(originalUri: string, targetPath: string, source?: string): IPlaylistDownloader;
+    create(originalUri: string, targetPath: string, headers?: string, source?: string): IPlaylistDownloader;
 }
 
 export interface IMediaListDownloaderItemFactory {
-    create(info: IHlsMediaInfo, id: string, name: string, targetPath: string): IMediaListDownloaderItem;
+    create(info: IHlsMediaInfo, id: string, name: string, targetPath: string, headers?: string): IMediaListDownloaderItem;
 }
 
 export interface IVariantListDownloaderItemFactory {
-    create(info: IHlsStreamInfo, id: string, name: string, targetPath: string): IVariantListDownloaderItem;
+    create(info: IHlsStreamInfo, id: string, name: string, targetPath: string, headers?: string): IVariantListDownloaderItem;
 }
 
 export interface IMapDownloaderFactory {
-    create(info: IHlsMap, targetPath: string, id: string): IMapDownloader;
+    create(info: IHlsMap, targetPath: string, id: string, headers?: string): IMapDownloader;
 }
 
 export interface IMediaDownloaderFactory {
-    create(info: IHlsInfo, targetPath: string, sequence: number): IMediaDownloader;
+    create(info: IHlsInfo, targetPath: string, sequence: number, headers?: string): IMediaDownloader;
 }
 
 

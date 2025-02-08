@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import {format as axiosFormat} from "@redtea/format-axios-error";
 import * as https from "node:https";
 
@@ -13,22 +13,32 @@ export class HttpAccess implements IHttpAccess {
         httpsAgent: new https.Agent({ keepAlive: true }),
     });
 
-    async download(url: string, rawError = false): Promise<void> {
+    async download(url: string, headers?: string, rawError = false): Promise<void> {
         try {
-            const response = await this.client.get(url);
+            let config : AxiosRequestConfig = { headers: undefined };
+            if (headers != undefined) {
+                config.headers = JSON.parse(headers);
+            }
+
+            const response = await this.client.get(url, config);
             return response.data;
         } catch (error) {
-            if (rawError) throw error
+            if (rawError) throw error;
             throw axiosFormat(error);
         }
     }
 
-    async downloadBinary(url: string, rawError = false) {
+    async downloadBinary(url: string, headers?: string, rawError = false) {
         try {
-            const response = await this.client.get(url, {responseType: 'arraybuffer'});
+            let config : AxiosRequestConfig = { headers: undefined, responseType: 'arraybuffer' };
+            if (headers != undefined) {
+                config.headers = JSON.parse(headers);
+            }
+
+            const response = await this.client.get(url, config);
             return response.data as Buffer;
         } catch (error) {
-            if (rawError) throw error
+            if (rawError) throw error;
             throw axiosFormat(error);
         }
     }
