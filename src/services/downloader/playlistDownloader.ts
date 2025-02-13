@@ -57,7 +57,7 @@ export class PlaylistDownloader implements IPlaylistDownloader {
     private init(data: IHlsPlaylist) {
         this.source = data;
         this.source.data.forEach((value, index) => {
-            this.data.push(this.mediaDownloaderFactory.create(value, this.targetPath, index));
+            this.data.push(this.mediaDownloaderFactory.create(value, this.targetPath, index, this.headers));
         });
         this.currentMediaSequence = data.mediaSequence + data.data.length;
         if (this.source.map !== undefined) {
@@ -100,7 +100,7 @@ export class PlaylistDownloader implements IPlaylistDownloader {
                 }
 
                 for (let i = startIndex; i < newSource.data.length; i++) {
-                    this.data.push(this.mediaDownloaderFactory.create(newSource.data[i], this.targetPath, this.data.length));
+                    this.data.push(this.mediaDownloaderFactory.create(newSource.data[i], this.targetPath, this.data.length, this.headers));
                 }
 
                 this.source = newSource;
