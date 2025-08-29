@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@redtea/format-axios-error": "2.1.1",
-    "axios": "1.7.9",
+    "axios": "1.11.0",
     "ejs": "3.1.10",
     "express": "4.21.2",
     "inversify": "6.2.2",
@@ -23,16 +23,16 @@
   "devDependencies": {
     "@types/bootstrap": "5",
     "@types/ejs": "3",
-    "@types/express": "5.0.0",
+    "@types/express": "5.0.3",
     "@types/gulp": "4.0.17",
-    "@types/node": "22.13.1",
-    "bootstrap": "5.3.3",
+    "@types/node": "24.3.0",
+    "bootstrap": "5.3.8",
     "del": "8.0.0",
-    "gulp": "5.0.0",
+    "gulp": "5.0.1",
     "gulp-typescript": "6.0.0-alpha.1",
-    "nodemon": "3.1.9",
-    "typescript": "5.7.3",
-    "video.js": "8.21.0"
+    "nodemon": "3.1.10",
+    "typescript": "5.9.2",
+    "video.js": "8.21.1"
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.9.2"
 }
