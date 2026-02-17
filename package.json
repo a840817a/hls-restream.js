@@ -11,28 +11,28 @@
   },
   "dependencies": {
     "@redtea/format-axios-error": "2.1.1",
-    "axios": "1.12.0",
-    "ejs": "3.1.10",
+    "axios": "1.13.5",
+    "ejs": "4.0.1",
     "express": "4.21.2",
     "inversify": "6.2.2",
-    "inversify-express-utils": "6.4.10",
+    "inversify-express-utils": "6.5.0",
     "reflect-metadata": "0.2.2",
-    "tslog": "4.9.3",
+    "tslog": "4.10.2",
     "url-join": "5.0.0"
   },
   "devDependencies": {
     "@types/bootstrap": "5",
     "@types/ejs": "3",
-    "@types/express": "5.0.3",
-    "@types/gulp": "4.0.17",
-    "@types/node": "24.3.0",
+    "@types/express": "5.0.6",
+    "@types/gulp": "4.0.18",
+    "@types/node": "25.2.3",
     "bootstrap": "5.3.8",
-    "del": "8.0.0",
+    "del": "8.0.1",
     "gulp": "5.0.1",
     "gulp-typescript": "6.0.0-alpha.1",
-    "nodemon": "3.1.10",
-    "typescript": "5.9.2",
-    "video.js": "8.21.1"
+    "nodemon": "3.1.11",
+    "typescript": "5.9.3",
+    "video.js": "8.23.7"
   },
   "packageManager": "yarn@4.9.2"
 }
