@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@redtea/format-axios-error": "2.1.1",
-    "axios": "1.15.0",
-    "ejs": "4.0.1",
-    "express": "4.22.1",
+    "axios": "1.17.0",
+    "ejs": "6.0.1",
+    "express": "4.22.2",
     "inversify": "6.2.2",
     "inversify-express-utils": "6.5.0",
     "reflect-metadata": "0.2.2",
@@ -34,5 +34,5 @@
     "typescript": "5.9.3",
     "video.js": "8.23.7"
   },
-  "packageManager": "yarn@4.9.2"
+  "packageManager": "yarn@4.16.0"
 }
