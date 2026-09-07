@@ -7,7 +7,9 @@ import {ILogger} from "../definition/interface/io";
 @injectable()
 export class Logger implements ILogger {
     private logger = new tsLog({
-        hideLogPositionForProduction: true,
+        stack: {
+            capture: "off",
+        },
     });
     private className: string = '';
 
