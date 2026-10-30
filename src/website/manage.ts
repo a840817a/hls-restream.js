@@ -1,11 +1,11 @@
-import {BaseHttpController, controller, httpGet, response} from "inversify-express-utils";
+import {Controller, Get, Response} from "@inversifyjs/http-core";
 import express from "express";
 
-@controller("/manage")
-export class ManageController extends BaseHttpController {
+@Controller("/manage")
+export class ManageController {
 
-    @httpGet("/")
-    private async index(@response() res: express.Response) {
+    @Get("/")
+    private async index(@Response() res: express.Response) {
         res.render("streamList");
     }
 }

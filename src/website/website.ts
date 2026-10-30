@@ -1,12 +1,12 @@
 import express from "express";
 
-import {BaseHttpController, controller, httpGet, response} from "inversify-express-utils";
+import {Controller, Get, Response} from "@inversifyjs/http-core";
 
-@controller("/")
-export class WebsiteController extends BaseHttpController {
+@Controller("/")
+export class WebsiteController {
 
-    @httpGet("/")
-    private async index(@response() res: express.Response) {
+    @Get("/")
+    private async index(@Response() res: express.Response) {
         res.render("fireRing");
     }
 }

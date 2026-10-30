@@ -1,61 +1,60 @@
 import {inject} from "inversify";
-import {BaseHttpController, controller, httpGet, httpPost, requestBody, requestParam} from "inversify-express-utils";
+import {BadRequestHttpResponse, Body, Controller, Get, NotFoundHttpResponse, Params, Post} from "@inversifyjs/http-core";
 
 import {TYPES} from "../../definition/types";
 import {IStreamManager} from "../../definition/interface/manager";
 
-@controller("/api/stream")
-export class StreamManagerController extends BaseHttpController {
+@Controller("/api/stream")
+export class StreamManagerController {
     public constructor(
         @inject(TYPES.StreamManager) private streamManager: IStreamManager
     ) {
-        super();
     }
 
-    @httpGet("/")
+    @Get("/")
     private getList() {
-        return this.json(this.streamManager.getList().map((job) => {
+        return this.streamManager.getList().map((job) => {
             return {
                 id: job.id,
                 title: job.title,
                 sourceUrl: job.sourceUrl,
                 playerLink: job.playerLink,
             };
-        }))
+        })
     }
 
-    @httpGet("/:id")
-    private getById(@requestParam('id') id: string) {
+    @Get("/:id")
+    private getById(@Params({name: 'id'}) id: string) {
         const job = this.streamManager.get(id);
         if (job == undefined) {
-            return this.notFound();
+            throw new NotFoundHttpResponse();
         }
 
-        return this.json({
+        return {
             id: job.id,
             title: job.title,
             sourceUrl: job.sourceUrl,
             playerLink: job.playerLink,
-        })
+        }
     }
 
-    @httpPost("/")
-    private add(@requestBody() input: { name?: string; url?: string; headers?: string; }) {
+    @Post("/")
+    private add(@Body() input: { name?: string; url?: string; headers?: string; }) {
         if (input.url == undefined) {
-            return this.badRequest('Missing Parameter');
+            throw new BadRequestHttpResponse('Missing Parameter');
         }
 
         try {
             const job = this.streamManager.add(input.name, input.url, input.headers);
-            return this.json({
+            return {
                 id: job.id,
                 title: job.title,
                 sourceUrl: job.sourceUrl,
                 playerLink: job.playerLink,
-            });
+            };
         }
         catch (error) {
-            return this.badRequest('Can not get hls');
+            throw new BadRequestHttpResponse('Can not get hls');
         }
     }
 }

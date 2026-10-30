@@ -1,8 +1,7 @@
 import gulp from "gulp";
-import ts from "gulp-typescript";
+import {execFile} from "node:child_process";
+import {promisify} from "node:util";
 import {deleteAsync} from "del";
-
-const tsProject = ts.createProject("tsconfig.json");
 
 
 // Task which would delete the old dist directory if present
@@ -12,11 +11,11 @@ gulp.task("build-clean", function () {
 
 // Task which would transpile typescript to javascript
 gulp.task("typescript", function () {
-    return tsProject.src().pipe(tsProject()).js.pipe(gulp.dest("dist"));
+    return promisify(execFile)("./node_modules/.bin/tsc", ["-p", "tsconfig.json"]);
 });
 
 gulp.task("video-js", function () {
-    return gulp.src("./node_modules/video.js/dist/**/*").pipe(gulp.dest("./dist/website/assets/video-js"));
+    return gulp.src("./node_modules/@videojs/cdn/**/*").pipe(gulp.dest("./dist/website/assets/video-js"));
 });
 
 gulp.task("bootstrap", function () {

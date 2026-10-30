@@ -1,4 +1,4 @@
-import {BaseHttpController, controller, httpGet, requestParam, response} from "inversify-express-utils";
+import {Controller, Get, Params, Response} from "@inversifyjs/http-core";
 import express from "express";
 import {inject} from "inversify";
 import {TYPES} from "../definition/types";
@@ -6,19 +6,18 @@ import {IStreamManager} from "../definition/interface/manager";
 import {PlaylistType} from "../definition/enum";
 import {IMultiVariantListDownloader, IPlaylistDownloader} from "../definition/interface/downloader";
 
-@controller("/media")
-export class MediaController extends BaseHttpController {
+@Controller("/media")
+export class MediaController {
     public constructor(
         @inject(TYPES.StreamManager) private streamManager: IStreamManager
     ) {
-        super();
     }
 
-    @httpGet("/:id/:variant?/:file")
-    private async GetVariantMediaData(@requestParam('id') id: string,
-                                      @requestParam('variant') variant: string,
-                                      @requestParam('file') file: string,
-                                      @response() res: express.Response) {
+    @Get("/:id{/:variant}/:file")
+    private async GetVariantMediaData(@Params({name: 'id'}) id: string,
+                                      @Params({name: 'variant'}) variant: string,
+                                      @Params({name: 'file'}) file: string,
+                                      @Response() res: express.Response) {
         let downloader = this.streamManager.get(id).downloader;
 
         if (downloader == undefined) {

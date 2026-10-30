@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="/video-js/video-js.min.css" rel="stylesheet">
-    <script src="/video-js/video.min.js"></script>
+    <script type="module" src="/video-js/video.js"></script>
+    <script type="module" src="/video-js/media/hlsjs-video.js"></script>
     <title><%= title %></title>
 </head>
 <body style="width: 100%; height: 100vh; margin: 0; padding: 0;">
-<video style="width: 100%; height: 100%;" id="my-video" class="video-js vjs-big-play-centered" controls preload="auto">
-    <source src="<%= path %>" type="application/x-mpegURL">
-</video>
-<script>
-    const player = videojs('my-video');
-</script>
+<video-player>
+    <video-skin style="width: 100%; height: 100%;">
+        <hlsjs-video src="<%= path %>" preload="auto" playsinline></hlsjs-video>
+    </video-skin>
+</video-player>
 </body>
 </html>
