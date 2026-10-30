@@ -1,0 +1,12 @@
+# Installed and built inside the image; host copies are platform-specific.
+node_modules
+dist
+.yarn/cache
+.yarn/install-state.gz
+
+# Not needed to build the image.
+.git
+.github
+.idea
+temp
+**/.DS_Store
